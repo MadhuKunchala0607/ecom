@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shopping Cart</title>
+  <link rel="stylesheet" href="cart.css">
+</head>
+<body>
+
+  <div class="container">
+    <h1 id="tot"></h1>
+    <div class="cont" id="cont"></div>
+  </div>
+
+  <script>
+    var val = JSON.parse(localStorage.getItem("ecom")) || [];  // Get stored data or initialize empty array
+    var cont = document.getElementById("cont");
+    var tot = document.getElementById("tot");
+    
+    // Function to calculate the total price
+    function calculateTotal() {
+      let total = val.reduce((acc, product) => acc + Number(product.price), 0);
+      tot.innerText = "Total: $ " + total.toFixed(2);  // Updated total displayed
+    }
+
+    // Initial total calculation
+    calculateTotal();
+
+    // Render products
+    val.forEach((product, index) => {
+      var card = document.createElement("div");
+      var title = document.createElement("h2");
+      var img = document.createElement("img");
+      var price = document.createElement("h2");
+      var remove = document.createElement("button");
+
+      title.innerText = product.title;
+      img.src = product.img;
+      price.innerText = "$" + product.price;
+      remove.innerText = "Remove";
+
+      card.append(title, img, price, remove);
+      card.className = "card";
+      
+      remove.addEventListener("click", () => {
+        // Remove product from array
+        val.splice(index, 1);
+
+        // Update localStorage
+        localStorage.setItem("ecom", JSON.stringify(val));
+
+        // Recalculate total and update UI
+        calculateTotal();
+
+        // Remove the card from the DOM
+        cont.removeChild(card);
+      });
+
+      cont.appendChild(card);
+    });
+  </script>
+</body>
+</html>
